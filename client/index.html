@@ -1,0 +1,50 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автобусные остановки</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-content">
+                <div class="logo">BusStop</div>
+                <div class="search-section">
+                    <div class="dropdown">
+                        <input type="text" id="region" class="form-control" placeholder="Начните вводить регион..." autocomplete="off">
+                        <ul id="regionDropdown" class="dropdown-menu"></ul>
+                    </div>
+                    <button id="fetchStops" class="btn">Загрузить остановки</button>
+                    <button id="geoButton" class="btn">Найти ближайшую</button>
+                    <div id="nearestStopInfo" class="nearest-stop-info" style="display: none;">
+                        <span class="nearest-stop-label">Ближайшая остановка:</span>
+                        <span id="nearestStopName"></span>
+                        <button id="viewNearestRoutes" class="btn">Посмотреть маршруты</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <!-- Поле поиска остановок -->
+        <div id="stopSearchContainer" class="mt-3" style="display: none;">
+            <label for="stopSearch">Выберите остановку:</label>
+            <div class="dropdown">
+                <input type="text" id="stopSearch" class="form-control" placeholder="Введите название остановки" autocomplete="off">
+                <ul id="stopsDropdown" class="dropdown-menu"></ul>
+            </div>
+        </div>
+        <!-- Список автобусов -->
+        <div id="buses" class="mt-3"></div>
+        <!-- Кнопка назад -->
+        <button id="backButton" class="btn btn-secondary mt-2" style="display: none;">Назад к остановкам</button>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
