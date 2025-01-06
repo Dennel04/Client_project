@@ -111,6 +111,7 @@ app.get('/buses', (req, res) => {
 app.get('/schedule', (req, res) => {
     const { stop_id, route_id } = req.query;
     const currentTime = new Date();
+    currentTime.setHours(currentTime.getHours() + 2); // +2 часа для Эстонии
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
     const currentTimeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}:00`;
