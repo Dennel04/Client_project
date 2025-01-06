@@ -29,7 +29,7 @@ app.get('/stops', (req, res) => {
     const { region } = req.query;
 
     pool.query(
-        'SELECT stop_id, stop_name FROM neliubov_bus_stops WHERE stop_area = ? ORDER BY stop_name ASC',
+        'SELECT stop_id, stop_name FROM stops WHERE stop_area = ? ORDER BY stop_name ASC',
         [region],
         (err, results) => {
             if (err) {
@@ -37,22 +37,18 @@ app.get('/stops', (req, res) => {
                 return res.status(500).send("Ошибка при запросе остановок.");
             }
 
-            // Создаем объект для исключения дублирующихся остановок по их имени
             const uniqueStops = {};
 
             results.forEach(row => {
-                // Убираем лишние пробелы, приводим к нижнему регистру для точного сравнения
                 const stopName = row.stop_name.trim().toLowerCase();
-                // Используем stop_name как ключ, чтобы избежать дублирования
                 if (!uniqueStops[stopName]) {
                     uniqueStops[stopName] = row.stop_id;
                 }
             });
 
-            // Преобразуем объект обратно в массив
             const stops = Object.keys(uniqueStops).map(stopName => ({
                 stop_id: uniqueStops[stopName],
-                stop_name: stopName.charAt(0).toUpperCase() + stopName.slice(1) // восстанавливаем регистр первого символа
+                stop_name: stopName.charAt(0).toUpperCase() + stopName.slice(1)
             }));
 
             res.json(stops);
@@ -67,7 +63,6 @@ app.get('/stops', (req, res) => {
 app.get('/buses', (req, res) => {
     const { stop_id } = req.query;
 
-    // Проверяем, что stop_id действительно передан в запросе
     console.log("Запрос на автобусы для остановки с ID:", stop_id);
 
     if (!stop_id) {
@@ -99,7 +94,7 @@ app.get('/buses', (req, res) => {
             return res.status(500).send("Ошибка при запросе автобусов.");
         }
 
-        console.log("Найдено автобусов:", results.length); // Количество найденных автобусов
+        console.log("Найдено автобусов:", results.length);
 
         if (results.length === 0) {
             console.log(`Найдено 0 автобусов для остановки с ID: ${stop_id}`);
@@ -113,7 +108,6 @@ app.get('/buses', (req, res) => {
     });
 });
 
-// В server.js добавим новый маршрут для получения расписания
 app.get('/schedule', (req, res) => {
     const { stop_id, route_id } = req.query;
     const currentTime = new Date();
@@ -146,7 +140,6 @@ app.get('/schedule', (req, res) => {
             return res.status(500).send("Ошибка при запросе расписания.");
         }
 
-        // Форматируем результаты
         const schedule = results.map(row => ({
             arrival_time: row.arrival_time,
             route_number: row.route_short_name,
@@ -198,10 +191,6 @@ app.get('/nearest-stop', (req, res) => {
         }
     });
 });
-
-
-
-
 
 // Главная страница
 app.get('/', (req, res) => {

@@ -1,38 +1,39 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const dotenv = require('dotenv');
+const ping = require('ping');
 
-// Важно: dotenv.config() должен быть вызван ДО использования process.env
+const dbHost = 'd26893.mysql.zonevs.eu';
+
+ping.sys.probe(dbHost, (isAlive) => {
+    if (isAlive) {
+        console.log(`${dbHost} is reachable.`);
+    } else {
+        console.log(`${dbHost} is not reachable.`);
+    }
+});
+
 dotenv.config();
-
-console.log("DB Host:", process.env.DB_HOST);
-console.log("DB User:", process.env.DB_USER);
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    // Добавляем SSL
-    ssl: {
-        rejectUnauthorized: false // Это самый простой вариант SSL
-    },
-    // Дополнительные настройки для улучшения стабильности
-    connectTimeout: 20000, // 20 секунд
+    port: 3306,
+    ssl: false,      
+    connectTimeout: 60000, 
     waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+    connectionLimit: 5
 });
 
-// Добавляем обработку ошибок пула
-pool.on('error', (err) => {
-    console.error('Unexpected error on idle client', err);
-    process.exit(-1);
+// Добавляем логирование для отладки
+pool.on('connection', function (connection) {
+    console.log('DB Connection established');
 });
 
-// Проверяем подключение при старте
 pool.getConnection((err, connection) => {
     if (err) {
-        console.error('Error connecting to the database:', err);
+        console.error('Detailed connection error:', err);
         return;
     }
     console.log('Successfully connected to database');
